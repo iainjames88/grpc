@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_package = "uk.me.maitland.grpc.todo";
+
+service ToDo {
+  rpc AddTask(Task) returns (Task) {}
+  rpc AddTasks(stream Task) returns (stream Task) {}
+  rpc GetTask (Task) returns (Task) {}
+  rpc GetTasks(GetTasksRequest) returns (stream Task) {}
+}
+
+message Task {
+  string id = 1;
+  string description = 2;
+}
+
+message GetTasksRequest {}
