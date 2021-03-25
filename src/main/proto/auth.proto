@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "uk.me.maitland.grpc.auth";
+
+service Auth {
+  rpc Authenticate(AuthenticationRequest) returns (AuthenticationResponse) {}
+}
+
+message AuthenticationRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message AuthenticationResponse {
+  string jwt = 1;
+}

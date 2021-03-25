@@ -13,6 +13,7 @@ def protobufVersion = '3.12.0'
 def protocVersion = protobufVersion
 def slf4jVersion = '1.7.30'
 def lombokVersion = '1.18.16'
+def jjwtVersion = '0.11.2'
 
 repositories {
 //    maven { url "https://maven-central.storage-download.googleapis.com/maven2/" }
@@ -30,6 +31,8 @@ dependencies {
     implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "org.slf4j:slf4j-simple:${slf4jVersion}"
+    compileOnly "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
     runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
 
     testImplementation "io.grpc:grpc-testing:${grpcVersion}"

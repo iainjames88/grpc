@@ -2,6 +2,8 @@ package uk.me.maitland.grpc.todo;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.ServerInterceptors;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import uk.me.maitland.grpc.auth.AuthGrpc;
+import uk.me.maitland.grpc.auth.AuthOuterClass.AuthenticationRequest;
+import uk.me.maitland.grpc.auth.AuthOuterClass.AuthenticationResponse;
 import uk.me.maitland.grpc.todo.Todo.GetTasksRequest;
 import uk.me.maitland.grpc.todo.Todo.Task;
 
@@ -21,7 +26,9 @@ public class ToDoServer {
     Server server =
         ServerBuilder.forPort(port)
             .useTransportSecurity(fullChain, privateKey)
-            .addService(new ToDoService())
+            .addService(new AuthService())
+            .addService(
+                ServerInterceptors.intercept(new ToDoService(), new AuthServerInterceptor()))
             .build();
 
     try {
@@ -38,7 +45,7 @@ public class ToDoServer {
 
     @Override
     public void addTask(Task request, StreamObserver<Task> responseObserver) {
-      log.info("Handling call to ToDo/addTask");
+      log.info("Handling call to ToDo/addTask for {}", Constants.DECODED_JWT.get());
 
       String uuid = UUID.randomUUID().toString();
       Task task = Task.newBuilder().setId(uuid).setDescription(request.getDescription()).build();
@@ -91,6 +98,22 @@ public class ToDoServer {
 
       tasks.forEach((k, v) -> responseObserver.onNext(v));
 
+      responseObserver.onCompleted();
+    }
+  }
+
+  @Slf4j
+  public static class AuthService extends AuthGrpc.AuthImplBase {
+    private static final Map<String, String> users = Map.of("iain", "password");
+
+    @Override
+    public void authenticate(
+        AuthenticationRequest request, StreamObserver<AuthenticationResponse> responseObserver) {
+      if (!users.get(request.getUsername()).equals(request.getPassword())) {
+        responseObserver.onError(Status.UNAUTHENTICATED.asRuntimeException());
+      }
+
+      responseObserver.onNext(AuthenticationResponse.newBuilder().setJwt("encoded_jwt").build());
       responseObserver.onCompleted();
     }
   }
