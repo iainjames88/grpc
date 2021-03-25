@@ -18,8 +18,7 @@ public class EchoClient {
   }
 
   public static void main(String[] args) throws InterruptedException {
-    ManagedChannel channel =
-        ManagedChannelBuilder.forAddress("localhost", 5001).usePlaintext().build();
+    ManagedChannel channel = ManagedChannelBuilder.forAddress("maitland.me.uk", 5001).build();
 
     try {
       EchoClient echoClient = new EchoClient(channel);

@@ -17,7 +17,7 @@ import uk.me.maitland.grpc.todo.Todo.Task;
 public class ToDoClient {
   public static void main(String[] args) throws InterruptedException {
     ManagedChannel channel =
-        ManagedChannelBuilder.forAddress("localhost", 5001).usePlaintext().build();
+        ManagedChannelBuilder.forAddress("maitland.me.uk", 5001).build();
 
     ToDoGrpcClient toDoGrpcClient = new ToDoGrpcClient(channel);
 

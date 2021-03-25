@@ -16,7 +16,13 @@ import uk.me.maitland.grpc.todo.Todo.Task;
 public class ToDoServer {
   public static void main(String[] args) {
     int port = 5001;
-    Server server = ServerBuilder.forPort(port).addService(new ToDoService()).build();
+    InputStream fullChain = ToDoServer.class.getClassLoader().getResourceAsStream("fullchain.pem");
+    InputStream privateKey = ToDoServer.class.getClassLoader().getResourceAsStream("privkey.pem");
+    Server server =
+        ServerBuilder.forPort(port)
+            .useTransportSecurity(fullChain, privateKey)
+            .addService(new ToDoService())
+            .build();
 
     try {
       log.info("Starting server on port {}", port);
