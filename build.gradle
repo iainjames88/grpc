@@ -33,6 +33,7 @@ dependencies {
     implementation "org.slf4j:slf4j-simple:${slf4jVersion}"
     compileOnly "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
     runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
 
     testImplementation "io.grpc:grpc-testing:${grpcVersion}"

@@ -5,8 +5,12 @@ import io.grpc.ServerBuilder;
 import io.grpc.ServerInterceptors;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -104,17 +108,24 @@ public class ToDoServer {
 
   @Slf4j
   public static class AuthService extends AuthGrpc.AuthImplBase {
-    private static final Map<String, String> users = Map.of("iain", "password");
+    private static final Map<String, String> USERS = Map.of("iain", "password");
 
     @Override
     public void authenticate(
         AuthenticationRequest request, StreamObserver<AuthenticationResponse> responseObserver) {
-      if (!users.get(request.getUsername()).equals(request.getPassword())) {
+      if (!USERS.get(request.getUsername()).equals(request.getPassword())) {
+        log.warn("{} failed to authenticate", request.getUsername());
         responseObserver.onError(Status.UNAUTHENTICATED.asRuntimeException());
+      } else {
+        log.info("{} authenticated", request.getUsername());
+        String jwt =
+            Jwts.builder()
+                .setSubject(request.getUsername())
+                .signWith(Constants.SIGNING_KEY)
+                .compact();
+        responseObserver.onNext(AuthenticationResponse.newBuilder().setJwt(jwt).build());
+        responseObserver.onCompleted();
       }
-
-      responseObserver.onNext(AuthenticationResponse.newBuilder().setJwt("encoded_jwt").build());
-      responseObserver.onCompleted();
     }
   }
 }
