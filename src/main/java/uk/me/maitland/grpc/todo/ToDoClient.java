@@ -1,7 +1,6 @@
 package uk.me.maitland.grpc.todo;
 
 import io.grpc.Channel;
-import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Metadata;
 import io.grpc.StatusRuntimeException;
@@ -11,9 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import lombok.extern.slf4j.Slf4j;
-import uk.me.maitland.grpc.auth.AuthGrpc;
-import uk.me.maitland.grpc.auth.AuthOuterClass.AuthenticationRequest;
-import uk.me.maitland.grpc.auth.AuthOuterClass.AuthenticationResponse;
+import uk.me.maitland.grpc.chat.AuthGrpcClient;
 import uk.me.maitland.grpc.todo.Todo.GetTasksRequest;
 import uk.me.maitland.grpc.todo.Todo.Task;
 
@@ -118,27 +115,4 @@ public class ToDoClient {
     }
   }
 
-  @Slf4j
-  public static class AuthGrpcClient {
-    private final AuthGrpc.AuthBlockingStub blockingStub;
-
-    public AuthGrpcClient(Channel channel) {
-      blockingStub = AuthGrpc.newBlockingStub(channel);
-    }
-
-    public String authenticate(String username, String password) {
-      try {
-        AuthenticationResponse response =
-            blockingStub.authenticate(
-                AuthenticationRequest.newBuilder()
-                    .setUsername(username)
-                    .setPassword(password)
-                    .build());
-        return response.getJwt();
-      } catch (StatusRuntimeException e) {
-        log.error("Error calling Auth/Authenticate", e);
-        throw e;
-      }
-    }
-  }
 }
