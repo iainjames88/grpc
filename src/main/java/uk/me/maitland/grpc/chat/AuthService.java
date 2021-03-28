@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import uk.me.maitland.grpc.auth.AuthGrpc;
 import uk.me.maitland.grpc.auth.AuthOuterClass.AuthenticationRequest;
 import uk.me.maitland.grpc.auth.AuthOuterClass.AuthenticationResponse;
-import uk.me.maitland.grpc.todo.Constants;
 
 @Slf4j
 public class AuthService extends AuthGrpc.AuthImplBase {

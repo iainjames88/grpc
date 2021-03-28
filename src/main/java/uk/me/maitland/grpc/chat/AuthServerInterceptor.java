@@ -1,4 +1,4 @@
-package uk.me.maitland.grpc.todo;
+package uk.me.maitland.grpc.chat;
 
 import io.grpc.Context;
 import io.grpc.Contexts;

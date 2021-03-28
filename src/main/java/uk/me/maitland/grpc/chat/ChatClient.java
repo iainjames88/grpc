@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ChatClient {
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) {
     Channel authChannel = ManagedChannelBuilder.forAddress("maitland.me.uk", 5001).build();
     AuthGrpcClient authGrpcClient = new AuthGrpcClient(authChannel);
 
